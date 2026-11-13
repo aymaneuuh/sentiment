@@ -11,6 +11,19 @@ source .venv/bin/activate        # Windows PowerShell : .venv\Scripts\Activate.p
 pip install -r requirements.txt
 ```
 
+## Lancer l'application après un clonage
+
+Sous Windows, les deux scripts suivants préparent l'environnement, installent
+le paquet et entraînent le modèle si nécessaire :
+
+```powershell
+.\installer.ps1
+.\lancer.ps1
+```
+
+L'interface s'ouvre sur http://localhost:8501 et la documentation de l'API
+sur http://localhost:8000/docs.
+
 ## Vérifier son installation
 
 ```bash
