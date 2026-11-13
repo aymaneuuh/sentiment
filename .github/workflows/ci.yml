@@ -12,3 +12,5 @@ jobs:
       - name: Modèle de démonstration, pour les tests de l'API (TP3)
         run: . .venv/bin/activate && python src/make_demo.py && python src/train.py
       - run: . .venv/bin/activate && pytest -q
+        env:
+          MIN_GIT_AUTHORS: "1"

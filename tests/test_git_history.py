@@ -2,13 +2,22 @@
 
 Ignorés si le dossier n'est pas un dépôt Git (par exemple sur un kit fraîchement décompressé).
 """
+import os
 import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
 
-MIN_AUTHORS = 2  # un binôme : deux auteurs de commits
+DEFAULT_MIN_AUTHORS = 2  # un binôme : deux auteurs de commits
+
+
+def _required_min_authors() -> int:
+    value = os.getenv("MIN_GIT_AUTHORS", str(DEFAULT_MIN_AUTHORS))
+    try:
+        return max(1, int(value))
+    except ValueError:
+        return DEFAULT_MIN_AUTHORS
 
 
 def _git(root: Path, *args: str) -> str:
@@ -33,9 +42,15 @@ def test_has_at_least_one_commit(git_root: Path):
 def test_each_member_has_committed(git_root: Path):
     out = _git(git_root, "shortlog", "-sn", "--all")
     authors = [line.split("\t", 1)[1].strip() for line in out.splitlines() if "\t" in line]
-    assert len(authors) >= MIN_AUTHORS, (
-        f"{len(authors)} auteur(s) de commits, {MIN_AUTHORS} attendus (un par membre du binôme) : {authors}"
+    min_authors = _required_min_authors()
+    assert len(authors) >= min_authors, (
+        f"{len(authors)} auteur(s) de commits, {min_authors} attendus (un par membre du binôme) : {authors}"
     )
+
+
+def test_required_min_authors_env_override(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("MIN_GIT_AUTHORS", "1")
+    assert _required_min_authors() == 1
 
 
 def test_venv_never_committed(git_root: Path):
