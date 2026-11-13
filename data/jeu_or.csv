@@ -1,0 +1,22 @@
+text,attendu,difficulte,erreur_connue
+"Livraison rapide et emballage soigné",POSITIVE,,
+"Le produit est excellent et fiable",POSITIVE,,
+"Service client réactif, je recommande",POSITIVE,,
+"Très satisfait de cet achat",POSITIVE,,
+"La qualité dépasse mes attentes",POSITIVE,,
+"Fonctionne parfaitement dès le premier jour",POSITIVE,,
+"Bon rapport qualité prix",POSITIVE,,
+"Pas déçu du tout, je recommande",POSITIVE,négation,
+"Arrivé cassé, bravo le transporteur",NEGATIVE,ironie,
+"Produit conforme et agréable à utiliser",POSITIVE,,
+"Produit inutilisable à la réception",NEGATIVE,,
+"Livraison très en retard et colis abîmé",NEGATIVE,,le modèle de démonstration classe mal cette formulation
+"Le service est lent et décevant",NEGATIVE,,
+"Je regrette vraiment cet achat",NEGATIVE,,le modèle de démonstration classe mal cette formulation
+"Qualité médiocre, je déconseille",NEGATIVE,,le modèle de démonstration classe mal cette formulation
+"Rien ne fonctionne correctement",NEGATIVE,,
+"Avis mitigé : correct mais sans plus",NEGATIVE,avis mitigé,
+"Ce film est captivant et bien joué",POSITIVE,autre domaine,
+"Le repas était froid et sans goût",NEGATIVE,autre domaine,
+"La batterie tient à peine une heure",NEGATIVE,,le modèle de démonstration classe mal cette formulation
+"Une expérience parfaite du début à la fin",POSITIVE,,

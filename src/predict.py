@@ -8,10 +8,17 @@ Usage :
 import sys
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal, TypedDict
 
 import joblib
 
 MODELE = Path(__file__).resolve().parents[1] / "models" / "sentiment.joblib"
+ModelLabel = Literal["positive", "negative"]
+
+
+class Prediction(TypedDict):
+    label: ModelLabel
+    score: float
 
 
 @lru_cache(maxsize=1)
@@ -22,12 +29,18 @@ def charger_modele():
     return joblib.load(MODELE)
 
 
-def predict(texte: str) -> dict:
+def predict(texte: str) -> Prediction:
     """Renvoie {'label': 'positive'|'negative', 'score': float}."""
     if not isinstance(texte, str) or not texte.strip():
         raise ValueError("texte vide")
     pipeline = charger_modele()
-    etiquette = pipeline.predict([texte])[0]
+    etiquette_brute = str(pipeline.predict([texte])[0]).lower()
+    if etiquette_brute == "positive":
+        etiquette: ModelLabel = "positive"
+    elif etiquette_brute == "negative":
+        etiquette = "negative"
+    else:
+        raise ValueError(f"étiquette de modèle inconnue : {etiquette_brute}")
     score = float(pipeline.predict_proba([texte]).max())
     return {"label": etiquette, "score": round(score, 4)}
 
