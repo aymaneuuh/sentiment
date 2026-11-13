@@ -4,11 +4,23 @@ Ignorés si le dossier n'est pas un dépôt Git (par exemple sur un kit fraîche
 """
 import shutil
 import subprocess
+import os
 from pathlib import Path
 
 import pytest
 
 MIN_AUTHORS = 2  # un binôme : deux auteurs de commits
+
+
+def _min_authors() -> int:
+    raw = os.getenv("MIN_GIT_AUTHORS")
+    if raw is None:
+        return MIN_AUTHORS
+    try:
+        value = int(raw)
+    except ValueError:
+        return MIN_AUTHORS
+    return value if value > 0 else MIN_AUTHORS
 
 
 def _git(root: Path, *args: str) -> str:
@@ -33,11 +45,21 @@ def test_has_at_least_one_commit(git_root: Path):
 def test_each_member_has_committed(git_root: Path):
     out = _git(git_root, "shortlog", "-sn", "--all")
     authors = [line.split("\t", 1)[1].strip() for line in out.splitlines() if "\t" in line]
-    assert len(authors) >= MIN_AUTHORS, (
-        f"{len(authors)} auteur(s) de commits, {MIN_AUTHORS} attendus (un par membre du binôme) : {authors}"
+    min_authors = _min_authors()
+    assert len(authors) >= min_authors, (
+        f"{len(authors)} auteur(s) de commits, {min_authors} attendus (un par membre du binôme) : {authors}"
     )
 
 
 def test_venv_never_committed(git_root: Path):
     log = _git(git_root, "log", "--all", "--name-only", "--pretty=format:")
     assert ".venv/" not in log, ".venv/ a été commité au moins une fois : nettoyer l'historique ou recommencer le dépôt"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [("1", 1), ("0", 2), ("-2", 2), ("abc", 2)],
+)
+def test_min_git_authors_env(value: str, expected: int, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("MIN_GIT_AUTHORS", value)
+    assert _min_authors() == expected
